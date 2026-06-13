@@ -7,7 +7,7 @@
 A multi-agent pipeline (LangGraph) that takes a raw inbound lead, scores its fit, drafts a
 personalized reply, and routes it to your CRM/Slack. Bring your own keys; runs locally with none.
 
-[![CI](https://github.com/Omate-AI/speed-to-lead-agent/actions/workflows/ci.yml/badge.svg)](https://github.com/Omate-AI/speed-to-lead-agent/actions/workflows/ci.yml)
+[![CI](https://github.com/OmateLabs/speed-to-lead-agent/actions/workflows/ci.yml/badge.svg)](https://github.com/OmateLabs/speed-to-lead-agent/actions/workflows/ci.yml)
 [![Python 3.12](https://img.shields.io/badge/python-3.12-blue.svg)](https://www.python.org)
 [![License: MIT](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
 [![Ruff](https://img.shields.io/badge/lint-ruff-orange.svg)](https://github.com/astral-sh/ruff)
@@ -60,7 +60,7 @@ flowchart LR
 ## Quickstart (zero keys, 2 minutes)
 
 ```bash
-git clone https://github.com/Omate-AI/speed-to-lead-agent
+git clone https://github.com/OmateLabs/speed-to-lead-agent
 cd speed-to-lead-agent
 make install      # uv sync
 make demo         # runs sample leads through the full pipeline — no signups

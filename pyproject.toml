@@ -44,7 +44,7 @@ dev = [
 ]
 
 [project.urls]
-Repository = "https://github.com/Omate-AI/speed-to-lead-agent"
+Repository = "https://github.com/OmateLabs/speed-to-lead-agent"
 
 [project.scripts]
 speed-to-lead = "speed_to_lead.cli:main"
