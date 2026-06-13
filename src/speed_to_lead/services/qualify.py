@@ -3,7 +3,9 @@
 `RuleQualifier` is the zero-dependency default (and a strong baseline). The
 fine-tuned LoRA classifier in `speed_to_lead.ml` implements the same
 `Qualifier` protocol and is dropped in when its adapter is present — so the
-graph never knows or cares which one is running.
+graph never knows or cares which one is running. Both funnel through
+`assemble_result`, so a rule decision and a model decision have the exact same
+shape; only the source of the *intent* and *confidence* differs.
 """
 
 from __future__ import annotations
@@ -38,6 +40,8 @@ _SPAM_PATTERNS: tuple[re.Pattern[str], ...] = tuple(
 )
 
 _HIGH_INTENT = frozenset({"purchase_intent", "pricing", "demo_request"})
+# Intents that mean "not a buyer" → routed to SPAM regardless of fit.
+SPAM_INTENTS = frozenset({"spam", "job_inquiry"})
 
 
 @runtime_checkable
@@ -65,64 +69,74 @@ def looks_like_spam(message: str | None) -> bool:
     return any(p.search(message) for p in _SPAM_PATTERNS)
 
 
+def fit_signals(lead: Lead, enrichment: EnrichmentResult) -> tuple[float, list[str], bool]:
+    """ICP-fit component of the score, with explainable reasons."""
+    score = 0.3  # neutral prior
+    reasons: list[str] = []
+    business = bool(lead.domain and is_business_domain(lead.domain))
+    if business:
+        score += 0.25
+        reasons.append("business email domain")
+    else:
+        reasons.append("free email domain")
+    if lead.company:
+        score += 0.1
+        reasons.append("company provided")
+    if enrichment.employee_range or enrichment.industry:
+        score += 0.1
+        reasons.append("enrichment matched company")
+    return score, reasons, business
+
+
+def _intent_bonus(intent: str) -> float:
+    if intent in _HIGH_INTENT:
+        return 0.25
+    return 0.05 if intent != "general_inquiry" else 0.0
+
+
+def assemble_result(
+    lead: Lead, enrichment: EnrichmentResult, intent: str, confidence: float, model: str
+) -> QualificationResult:
+    """Combine an intent (from rules or the model) with ICP fit into a result."""
+    if intent in SPAM_INTENTS or looks_like_spam(lead.message):
+        return QualificationResult(
+            tier=FitTier.SPAM,
+            score=0.05,
+            confidence=max(confidence, 0.9),
+            intent="spam" if looks_like_spam(lead.message) else intent,
+            reasons=["matched spam/non-buyer pattern"],
+            model=model,
+        )
+    fit, reasons, _ = fit_signals(lead, enrichment)
+    bonus = _intent_bonus(intent)
+    if bonus:
+        reasons.append(f"intent: {intent}")
+    score = min(fit + bonus, 1.0)
+    tier = FitTier.HOT if score >= 0.7 else FitTier.WARM if score >= 0.45 else FitTier.COLD
+    return QualificationResult(
+        tier=tier,
+        score=round(score, 3),
+        confidence=round(confidence, 3),
+        intent=intent,
+        reasons=reasons,
+        model=model,
+    )
+
+
 class RuleQualifier:
     """Transparent, deterministic baseline qualifier.
 
-    Scores ICP fit from explainable signals and classifies buyer intent from
-    the message. Every decision ships with `reasons` so a human can audit it.
+    Classifies buyer intent by keyword and scores ICP fit from explainable
+    signals. Every decision ships with `reasons` so a human can audit it.
     """
 
     name = "rules"
 
     def qualify(self, lead: Lead, enrichment: EnrichmentResult) -> QualificationResult:
         intent = detect_intent(lead.message)
-        reasons: list[str] = []
-
-        if intent == "job_inquiry" or looks_like_spam(lead.message):
-            return QualificationResult(
-                tier=FitTier.SPAM,
-                score=0.05,
-                confidence=0.9,
-                intent="spam" if looks_like_spam(lead.message) else intent,
-                reasons=["matched spam/non-buyer pattern"],
-                model=self.name,
-            )
-
-        score = 0.3  # neutral prior
-        business = bool(lead.domain and is_business_domain(lead.domain))
-        if business:
-            score += 0.25
-            reasons.append("business email domain")
-        else:
-            reasons.append("free email domain")
-
-        if lead.company:
-            score += 0.1
-            reasons.append("company provided")
-        if enrichment.employee_range or enrichment.industry:
-            score += 0.1
-            reasons.append("enrichment matched company")
-
-        if intent in _HIGH_INTENT:
-            score += 0.25
-            reasons.append(f"high-intent message: {intent}")
-        elif intent != "general_inquiry":
-            score += 0.05
-            reasons.append(f"intent: {intent}")
-
-        score = min(score, 1.0)
-        tier = FitTier.HOT if score >= 0.7 else FitTier.WARM if score >= 0.45 else FitTier.COLD
-        # Confidence: strong when signals agree (business+high-intent or neither).
-        confidence = 0.6 + 0.3 * (1 if business and intent in _HIGH_INTENT else 0)
-
-        return QualificationResult(
-            tier=tier,
-            score=round(score, 3),
-            confidence=round(confidence, 3),
-            intent=intent,
-            reasons=reasons,
-            model=self.name,
-        )
+        _, _, business = fit_signals(lead, enrichment)
+        confidence = 0.6 + 0.3 * (1.0 if business and intent in _HIGH_INTENT else 0.0)
+        return assemble_result(lead, enrichment, intent, confidence, self.name)
 
 
 def get_qualifier() -> Qualifier:

@@ -99,13 +99,20 @@ Qualification runs behind a single `Qualifier` interface with two implementation
 
 1. **`RuleQualifier`** — a transparent, deterministic baseline (the keyless default). Strong, auditable,
    zero dependencies.
-2. **LoRA-fine-tuned intent classifier** — a small Hugging Face transformer fine-tuned with PEFT/LoRA
-   (PyTorch), served as its own inference path. `make train` produces the adapter; `make eval` scores
-   it against the rule and LLM-zero-shot baselines (F1 + cost/latency). When the adapter is present it
-   is loaded automatically; otherwise the rule baseline is used. *Eval scorecard lands here once trained.*
+2. **LoRA-fine-tuned intent classifier** — DistilBERT fine-tuned with PEFT/LoRA (PyTorch), **744K
+   trainable params (1.1% of the model)**, served as its own inference path. `make train` produces the
+   adapter (~30s on a laptop); when present it loads automatically, otherwise the rule baseline is used.
 
-The rationale is deliberately production-minded: a fine-tuned classifier replaces a per-lead LLM call
-with a model that's cheaper and faster — the numbers are published in [`docs/benchmarks.md`](docs/benchmarks.md).
+**Result** — on a hand-written, held-out realistic set (messages unseen in training):
+
+| Strategy | Accuracy | Macro-F1 | $/1k leads |
+|----------|----------|----------|-----------|
+| Rule baseline (keyword) | 0.500 | 0.500 | $0 |
+| **LoRA classifier** | **0.938** | **0.933** | ~$0 (local) |
+
+Nearly **2× the intent accuracy** of keyword rules on phrasing it never saw — for ~$0, locally, in
+milliseconds. That's the case for fine-tuning over a per-lead LLM call. Full methodology in
+[`docs/benchmarks.md`](docs/benchmarks.md) and [`MODEL_CARD.md`](MODEL_CARD.md).
 
 ## Tech
 
@@ -129,8 +136,9 @@ src/speed_to_lead/
 ## Roadmap
 
 - [x] Multi-agent pipeline + keyless demo + funnel analytics
-- [ ] LoRA-fine-tuned classifier + eval scorecard
-- [ ] MCP server + Langfuse tracing
+- [x] LoRA-fine-tuned classifier + eval scorecard
+- [x] MCP server
+- [ ] Langfuse tracing + Grafana dashboards
 - [ ] Docker Compose / Helm + GitHub Actions deploy
 - [ ] ATS (Greenhouse) connector for recruiting pipelines
 

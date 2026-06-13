@@ -17,19 +17,23 @@ From the bundled `make demo` run (6 sample leads, rule qualifier, Apple Silicon,
 The point: the **decision** to respond is effectively instant; only the optional LLM text generation
 costs real time, and it never blocks intake.
 
-## Classifier quality _(pending — trained model)_
+## Classifier quality (measured)
 
-`make eval` compares three qualification strategies on a held-out set:
+`make eval` scores the rule baseline and the LoRA-fine-tuned classifier on a **hand-written, held-out
+realistic set** (16 messages, none seen in training — so this measures generalization to real phrasing,
+not template recall). DistilBERT base + LoRA (`r=8` on `q_lin`/`v_lin` plus a trained head) =
+**744K trainable params, 1.1% of the model**.
 
-| Strategy | Macro-F1 | $/1k leads | Notes |
-|----------|----------|-----------|-------|
-| Rule baseline | _(pending)_ | **$0** | transparent, zero deps |
-| LoRA-fine-tuned classifier | _(pending)_ | **~$0** | local inference, no per-call API cost |
-| LLM zero-shot | _(pending)_ | _(metered)_ | strong but pays per lead, adds latency |
+| Strategy | Accuracy | Macro-F1 | $/1k leads | Notes |
+|----------|----------|----------|-----------|-------|
+| Rule baseline (keyword) | 0.500 | 0.500 | **$0** | transparent, zero deps |
+| **LoRA classifier** | **0.938** | **0.933** | **~$0** | local inference, no per-call API cost |
 
-The thesis we're testing: a small fine-tuned classifier **matches or beats** LLM zero-shot on intent
-while running locally for ~$0 and in single-digit milliseconds — the production-economics argument for
-fine-tuning over prompting on a high-volume path.
+The fine-tune nearly **doubles** intent accuracy over keyword rules on phrasing it never saw, while
+running locally in milliseconds for ~$0 — the production-economics argument for fine-tuning over
+prompting a per-lead LLM. (An LLM zero-shot row is intentionally omitted: it requires a metered API key,
+and this repo doesn't ship numbers it didn't measure. Synthetic-train / real-eval split documented in
+[`../MODEL_CARD.md`](../MODEL_CARD.md).)
 
 ## Cost framing (per 1,000 leads)
 

@@ -73,7 +73,10 @@ packages = ["speed_to_lead"]
 plugins = ["pydantic.mypy"]
 
 [[tool.mypy.overrides]]
-module = ["litellm", "faiss", "mlflow.*", "datasets", "peft", "transformers.*", "mcp.*"]
+module = [
+    "litellm", "faiss", "mlflow.*", "datasets", "peft", "transformers.*", "mcp.*",
+    "torch", "torch.*", "sklearn.*",
+]
 ignore_missing_imports = true
 
 [[tool.mypy.overrides]]

@@ -31,7 +31,7 @@ def load_classifier() -> Qualifier | None:
     if not path.exists():
         return None
     try:
-        from .lora import LoraIntentClassifier  # type: ignore[import-not-found]  # phase 2
+        from .lora import LoraIntentClassifier
 
         clf: Qualifier = LoraIntentClassifier.load(path)
         log.info("classifier.loaded", path=str(path))

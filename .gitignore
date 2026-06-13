@@ -18,6 +18,7 @@ build/
 # ML artifacts (trained adapters, checkpoints, datasets cache)
 artifacts/
 mlruns/
+mlflow.db
 *.bin
 *.safetensors
 .cache/
