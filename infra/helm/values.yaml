@@ -1,7 +1,7 @@
 replicaCount: 2
 
 image:
-  repository: ghcr.io/omate-ai/speed-to-lead-agent
+  repository: ghcr.io/omatelabs/speed-to-lead-agent
   tag: ""          # defaults to .Chart.AppVersion
   pullPolicy: IfNotPresent
 

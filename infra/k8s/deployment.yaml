@@ -19,7 +19,7 @@ spec:
         runAsNonRoot: true
       containers:
         - name: api
-          image: ghcr.io/omate-ai/speed-to-lead-agent:0.1.0
+          image: ghcr.io/omatelabs/speed-to-lead-agent:0.1.0
           ports:
             - containerPort: 8000
           env:
