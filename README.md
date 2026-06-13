@@ -137,10 +137,9 @@ src/speed_to_lead/
 
 - [x] Multi-agent pipeline + keyless demo + funnel analytics
 - [x] LoRA-fine-tuned classifier + eval scorecard
-- [x] MCP server
-- [ ] Langfuse tracing + Grafana dashboards
-- [ ] Docker Compose / Helm + GitHub Actions deploy
-- [ ] ATS (Greenhouse) connector for recruiting pipelines
+- [x] MCP server · FAISS ICP similarity · ATS (Greenhouse) connector
+- [x] Langfuse tracing + Prometheus/Grafana dashboards (config-as-code)
+- [ ] Deploy (HF Spaces / Cloud Run) + demo GIF
 
 ## License
 

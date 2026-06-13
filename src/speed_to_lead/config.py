@@ -50,6 +50,12 @@ class Settings(BaseSettings):
 
     # ATS
     greenhouse_api_key: str | None = None
+    greenhouse_on_behalf_of: str | None = None
+
+    # Observability (Langfuse — LLM tracing)
+    langfuse_public_key: str | None = None
+    langfuse_secret_key: str | None = None
+    langfuse_host: str | None = None
 
     # Infra
     redis_url: str = "redis://localhost:6379/0"

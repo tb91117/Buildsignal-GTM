@@ -65,6 +65,7 @@ class EnrichmentResult(BaseModel):
     industry: str | None = None
     employee_range: str | None = None
     summary: str | None = None
+    icp_similarity: float | None = None  # cosine sim to ICP seeds (FAISS), if computed
     source: str = "mock"
 
 

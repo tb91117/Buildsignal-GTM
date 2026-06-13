@@ -20,6 +20,7 @@ from ..logging import get_logger
 from ..models import DraftResult, FitTier, Lead, LeadOutcome, RouteResult
 from ..services.draft import get_drafter
 from ..services.enrich import get_enricher
+from ..services.icp import IcpIndex
 from ..services.qualify import Qualifier, get_qualifier
 from .state import PipelineState
 
@@ -30,11 +31,16 @@ class LeadPipeline:
     """Compiled LangGraph pipeline with injected, swappable services."""
 
     def __init__(
-        self, settings: Settings | None = None, *, qualifier: Qualifier | None = None
+        self,
+        settings: Settings | None = None,
+        *,
+        qualifier: Qualifier | None = None,
+        icp: IcpIndex | None = None,
     ) -> None:
         self.settings = settings or get_settings()
         self._enricher = get_enricher()
         self._qualifier = qualifier or get_qualifier()
+        self._icp = icp
         self._drafter = get_drafter(self.settings)
         self._crm = get_crm(self.settings)
         self._notifier = get_notifier(self.settings)
@@ -42,7 +48,11 @@ class LeadPipeline:
 
     # --- nodes -----------------------------------------------------------
     async def _research(self, state: PipelineState) -> PipelineState:
-        enrichment = await self._enricher.enrich(state["lead"])
+        lead = state["lead"]
+        enrichment = await self._enricher.enrich(lead)
+        if self._icp is not None:
+            text = f"{lead.company or ''} {lead.message or ''}".strip()
+            enrichment.icp_similarity = self._icp.similarity(text)
         return {"enrichment": enrichment}
 
     async def _qualify(self, state: PipelineState) -> PipelineState:
@@ -123,6 +133,9 @@ def _spam_placeholder_draft() -> DraftResult:
 
 
 def build_pipeline(
-    settings: Settings | None = None, *, qualifier: Qualifier | None = None
+    settings: Settings | None = None,
+    *,
+    qualifier: Qualifier | None = None,
+    icp: IcpIndex | None = None,
 ) -> LeadPipeline:
-    return LeadPipeline(settings, qualifier=qualifier)
+    return LeadPipeline(settings, qualifier=qualifier, icp=icp)

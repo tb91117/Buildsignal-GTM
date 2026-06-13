@@ -85,6 +85,9 @@ def fit_signals(lead: Lead, enrichment: EnrichmentResult) -> tuple[float, list[s
     if enrichment.employee_range or enrichment.industry:
         score += 0.1
         reasons.append("enrichment matched company")
+    if enrichment.icp_similarity is not None and enrichment.icp_similarity >= 0.45:
+        score += 0.1
+        reasons.append(f"ICP match {enrichment.icp_similarity:.2f}")
     return score, reasons, business
 
 

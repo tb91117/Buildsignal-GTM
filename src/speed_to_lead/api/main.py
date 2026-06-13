@@ -21,6 +21,7 @@ from ..config import get_settings
 from ..logging import configure_logging, get_logger
 from ..models import InboundLead, LeadOutcome
 from ..normalize import normalize_lead
+from ..observability import setup_tracing
 from ..worker import InMemoryQueue
 from .security import verify_signature
 
@@ -47,6 +48,7 @@ async def _consume(app: FastAPI) -> None:
 async def lifespan(app: FastAPI) -> AsyncIterator[None]:
     settings = get_settings()
     configure_logging(settings.log_level, pretty=settings.environment == "local")
+    setup_tracing(settings)  # Langfuse LLM tracing if keys are set (else no-op)
     app.state.settings = settings
     app.state.pipeline = build_pipeline(settings)
     app.state.queue = InMemoryQueue()  # per-app, bound to this event loop
