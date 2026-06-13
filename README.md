@@ -133,6 +133,13 @@ src/speed_to_lead/
 └── mcp_server/    Model Context Protocol server
 ```
 
+## Deploy
+
+- **Single host:** `docker compose up` — api + worker + Redis + Postgres.
+- **Kubernetes:** `helm install stl infra/helm/` (or `kubectl apply -f infra/k8s/`) — liveness/readiness
+  probes, resource limits, non-root, optional HPA, and bring-your-own-key via a referenced `Secret`.
+- **Serverless:** it's a standard ASGI app — deploys to Hugging Face Spaces / Cloud Run / Render unchanged.
+
 ## Roadmap
 
 - [x] Multi-agent pipeline + keyless demo + funnel analytics
