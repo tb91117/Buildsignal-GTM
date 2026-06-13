@@ -14,6 +14,7 @@ from collections.abc import AsyncIterator
 
 from fastapi import FastAPI, Header, Request, Response
 from fastapi.responses import JSONResponse, PlainTextResponse
+from pydantic import ValidationError
 
 from ..agents import build_pipeline
 from ..analytics import get_metrics
@@ -83,7 +84,10 @@ def create_app() -> FastAPI:
         body = await request.body()
         if not verify_signature(app.state.settings.webhook_signing_secret, body, x_signature):
             return JSONResponse({"error": "invalid signature"}, status_code=401)
-        inbound = InboundLead.model_validate_json(body)
+        try:
+            inbound = InboundLead.model_validate_json(body)
+        except ValidationError:
+            return JSONResponse({"error": "invalid lead payload"}, status_code=400)
         lead = normalize_lead(inbound)
         await app.state.queue.put(lead)  # 202: queued, worker handles the slow part
         return JSONResponse({"lead_id": lead.id, "status": "queued"}, status_code=202)

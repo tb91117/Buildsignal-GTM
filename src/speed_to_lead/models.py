@@ -35,12 +35,13 @@ class InboundLead(BaseModel):
 
     model_config = ConfigDict(extra="allow")
 
+    # Length caps bound ReDoS / memory / prompt-injection blast radius on untrusted webhook input.
     email: EmailStr
-    name: str | None = None
-    company: str | None = None
-    message: str | None = None
-    source: str | None = Field(default=None, description="utm_source / referrer")
-    phone: str | None = None
+    name: str | None = Field(default=None, max_length=200)
+    company: str | None = Field(default=None, max_length=200)
+    message: str | None = Field(default=None, max_length=5000)
+    source: str | None = Field(default=None, max_length=200, description="utm_source / referrer")
+    phone: str | None = Field(default=None, max_length=50)
     raw: dict[str, Any] = Field(default_factory=dict)
 
 
