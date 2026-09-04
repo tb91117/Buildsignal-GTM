@@ -164,7 +164,8 @@ class OpenAIOpportunityIntelligence(DemoOpportunityIntelligence):
             input=json.dumps(payload, default=str),
             max_output_tokens=1000,
         )
-        return response.output_text.strip()
+        output_text: str = response.output_text
+        return output_text.strip()
 
     async def research(self, task: ResearchTask, request: OpportunityRequest) -> AgentFinding:
         baseline = await super().research(task, request)
