@@ -1,4 +1,4 @@
-"""Command-line entry point: `speed-to-lead {demo,serve}`."""
+"""Command-line entry point: `speed-to-lead {demo,opportunity-demo,serve}`."""
 
 from __future__ import annotations
 
@@ -7,14 +7,15 @@ import asyncio
 import json
 from pathlib import Path
 
-from .agents import build_pipeline
+from .agents import build_opportunity_pipeline, build_pipeline
 from .analytics import get_metrics
 from .config import get_settings
 from .logging import configure_logging
-from .models import InboundLead
+from .models import InboundLead, OpportunityRequest
 from .normalize import normalize_lead
 
 _SAMPLE = Path(__file__).resolve().parents[2] / "data" / "sample_leads.json"
+_OPPORTUNITY_SAMPLE = Path(__file__).resolve().parents[2] / "data" / "sample_opportunities.json"
 
 
 async def _run_demo(path: Path) -> None:
@@ -44,11 +45,31 @@ async def _run_demo(path: Path) -> None:
     print(f"    response p50 / p95 : {snap['response_ms_p50']} / {snap['response_ms_p95']} ms\n")
 
 
+async def _run_opportunity_demo(path: Path) -> None:
+    settings = get_settings()
+    configure_logging("WARNING", pretty=True)
+    pipeline = build_opportunity_pipeline(settings)
+    requests = [OpportunityRequest.model_validate(row) for row in json.loads(path.read_text())]
+    mode = "OpenAI" if settings.openai_enabled else "deterministic"
+    print(f"\n  BuildSignal GTM · {mode} mode · {len(requests)} opportunities\n")
+    for request in requests:
+        outcome = await pipeline.run(request)
+        tier_and_score = f"{outcome.decision.tier.upper():<8} {outcome.decision.score:>3}/100"
+        print(f"  {tier_and_score}  {request.company}")
+        print(f"           {outcome.brief.executive_summary}")
+        print(f"           route: {outcome.routing_status}")
+        print(f"           trace: {' -> '.join(outcome.agent_trace)}\n")
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(prog="speed-to-lead")
     sub = parser.add_subparsers(dest="cmd", required=True)
     demo = sub.add_parser("demo", help="run sample leads through the pipeline (keyless)")
     demo.add_argument("--file", type=Path, default=_SAMPLE)
+    opportunity_demo = sub.add_parser(
+        "opportunity-demo", help="run building-material opportunities through BuildSignal"
+    )
+    opportunity_demo.add_argument("--file", type=Path, default=_OPPORTUNITY_SAMPLE)
     serve = sub.add_parser("serve", help="run the API server")
     serve.add_argument("--host", default="127.0.0.1")
     serve.add_argument("--port", type=int, default=8000)
@@ -56,6 +77,8 @@ def main() -> None:
     args = parser.parse_args()
     if args.cmd == "demo":
         asyncio.run(_run_demo(args.file))
+    elif args.cmd == "opportunity-demo":
+        asyncio.run(_run_opportunity_demo(args.file))
     elif args.cmd == "serve":
         import uvicorn
 

@@ -40,6 +40,34 @@ def test_metrics_endpoint() -> None:
         assert "by_source" in snap  # attribution present
 
 
+def test_opportunity_endpoint_returns_sales_brief() -> None:
+    with TestClient(app) as client:
+        resp = client.post(
+            "/opportunities/sync",
+            json={
+                "email": "buyer@builder.com",
+                "contact_name": "Jamie Lee",
+                "company": "Builder Co",
+                "message": "Need pricing for facade panels on our hospital project.",
+                "product_category": "facade panels",
+                "project_name": "Regional Hospital",
+                "estimated_value": 250000,
+                "deadline": "2026-10-01",
+            },
+        )
+        assert resp.status_code == 200
+        body = resp.json()
+        assert body["decision"]["tier"] == "Pursue"
+        assert body["routing_status"] == "awaiting_human_approval"
+
+
+def test_demo_ui_is_available() -> None:
+    with TestClient(app) as client:
+        resp = client.get("/")
+        assert resp.status_code == 200
+        assert "BuildSignal GTM" in resp.text
+
+
 def test_signature_helper_roundtrip() -> None:
     body = b'{"email":"a@b.com"}'
     assert sign("secret", body) == sign("secret", body)

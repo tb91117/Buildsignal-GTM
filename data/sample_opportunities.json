@@ -1,0 +1,23 @@
+[
+  {
+    "email": "maria@northstarbuild.com",
+    "contact_name": "Maria Chen",
+    "company": "Northstar Construction",
+    "message": "We need a quote and technical review for facade panels on a 240-unit residential project. The architect is finalizing the specification this month.",
+    "source": "architect referral",
+    "product_category": "fiber cement facade panels",
+    "project_name": "Riverfront Residences",
+    "project_location": "Minneapolis, MN",
+    "project_stage": "design development",
+    "estimated_value": 425000,
+    "deadline": "2026-09-18",
+    "decision_maker_role": "Preconstruction Director"
+  },
+  {
+    "email": "owner@gmail.com",
+    "contact_name": "Sam Rivera",
+    "company": "Rivera Renovations",
+    "message": "Looking around for exterior products for a possible renovation.",
+    "source": "organic search"
+  }
+]
