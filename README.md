@@ -45,11 +45,32 @@ git clone https://github.com/tb91117/Buildsignal-GTM.git
 cd Buildsignal-GTM
 uv sync --extra dev --extra openai --python 3.12
 copy .env.example .env
+cd frontend
+npm install
+npm run build
+cd ..
 uv run buildsignal opportunity-demo
 uv run buildsignal serve
 ```
 
 Open <http://127.0.0.1:8000> for the visual demo or <http://127.0.0.1:8000/docs> for the API explorer.
+
+### Frontend development
+
+The presentation UI is a React and TypeScript application built with shadcn/ui component patterns and Tailwind CSS. Run FastAPI in one terminal:
+
+```bash
+uv run buildsignal serve
+```
+
+Then run Vite in a second terminal. It proxies API requests to FastAPI:
+
+```bash
+cd frontend
+npm run dev
+```
+
+Open <http://127.0.0.1:5173>. After frontend changes, `npm run build` produces the static application served by FastAPI at port 8000.
 
 ### Keyless mode
 
@@ -96,7 +117,7 @@ The response includes specialist findings, evidence confidence, missing informat
 src/speed_to_lead/
 ├── agents/opportunity_graph.py          supervisor/worker LangGraph
 ├── services/opportunity_intelligence.py deterministic and OpenAI specialists
-├── api/demo_ui.py                       self-contained presentation UI
+├── api/demo_ui.py                       keyless fallback UI
 ├── api/main.py                          FastAPI routes and app lifecycle
 ├── models.py                            typed graph contracts
 └── cli.py                               keyless/live command-line demos
@@ -104,6 +125,7 @@ data/sample_opportunities.json           strong and incomplete demo scenarios
 tests/test_opportunity_pipeline.py        graph behavior and auditability
 docs/buildsignal-architecture.md          technical walkthrough
 docs/presentation-guide.md                pitch, demo script, and interview Q&A
+frontend/                                 React + shadcn/ui presentation workspace
 ```
 
 The original lead intake, classifier, CRM adapters, analytics, MCP server, deployment manifests, and observability examples remain available as the broader production scaffold.
