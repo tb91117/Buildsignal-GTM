@@ -1,12 +1,12 @@
 [project]
 name = "speed-to-lead-agent"
 version = "0.1.0"
-description = "Open-source AI agent that qualifies and responds to inbound leads in seconds. Multi-agent (LangGraph), a fine-tuned intent classifier, and a real GTM integration layer — bring your own keys."
+description = "Multi-agent opportunity intelligence for building-material revenue teams, built with LangGraph and FastAPI."
 readme = "README.md"
 requires-python = ">=3.12"
 license = { text = "MIT" }
-authors = [{ name = "Omate Labs" }]
-keywords = ["ai-agent", "langgraph", "speed-to-lead", "lead-scoring", "fastapi", "mcp", "gtm"]
+authors = [{ name = "tb91117" }]
+keywords = ["ai-agent", "langgraph", "building-materials", "lead-scoring", "fastapi", "gtm"]
 
 dependencies = [
     "fastapi>=0.115",
@@ -23,6 +23,8 @@ dependencies = [
 [project.optional-dependencies]
 # LLM drafting — provider-agnostic. Optional: demo mode runs without it.
 llm = ["litellm>=1.52", "langfuse>=2.0"]
+# OpenAI Responses API for BuildSignal specialist agents.
+openai = ["openai>=1.99"]
 # Expose the pipeline's tools as an MCP server (Claude / Cursor / any MCP client).
 mcp = ["mcp>=1.2"]
 # The fine-tune stack. Heavy; only needed to (re)train the classifier.
@@ -44,7 +46,7 @@ dev = [
 ]
 
 [project.urls]
-Repository = "https://github.com/OmateLabs/speed-to-lead-agent"
+Repository = "https://github.com/tb91117/GTM-agent"
 
 [project.scripts]
 speed-to-lead = "speed_to_lead.cli:main"
@@ -76,6 +78,7 @@ plugins = ["pydantic.mypy"]
 module = [
     "litellm", "faiss", "mlflow.*", "datasets", "peft", "transformers.*", "mcp.*",
     "torch", "torch.*", "sklearn.*", "sentence_transformers", "sentence_transformers.*",
+    "openai", "openai.*",
 ]
 ignore_missing_imports = true
 

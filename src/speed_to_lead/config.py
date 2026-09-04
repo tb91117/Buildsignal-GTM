@@ -34,6 +34,10 @@ class Settings(BaseSettings):
     llm_model: str = "gemini/gemini-1.5-flash"
     llm_api_key: str | None = None
 
+    # OpenAI Responses API (BuildSignal intelligence agents)
+    openai_api_key: str | None = None
+    openai_model: str = "gpt-5-mini"
+
     # Webhook security
     webhook_signing_secret: str | None = None
 
@@ -68,6 +72,11 @@ class Settings(BaseSettings):
     def llm_enabled(self) -> bool:
         """True when a real LLM can be called (key present and not demo)."""
         return not self.demo_mode and bool(self.llm_api_key)
+
+    @property
+    def openai_enabled(self) -> bool:
+        """True when BuildSignal should use live OpenAI agent reasoning."""
+        return not self.demo_mode and bool(self.openai_api_key)
 
     @property
     def slack_enabled(self) -> bool:

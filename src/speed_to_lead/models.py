@@ -110,3 +110,70 @@ class LeadOutcome(BaseModel):
     routing: RouteResult
     latency_ms: float | None = None
     completed_at: datetime = Field(default_factory=_utcnow)
+
+
+class OpportunityRequest(BaseModel):
+    """A building-material sales opportunity entering the intelligence graph."""
+
+    email: EmailStr
+    contact_name: str | None = Field(default=None, max_length=200)
+    company: str = Field(min_length=1, max_length=200)
+    message: str = Field(min_length=1, max_length=8000)
+    source: str = Field(default="website", max_length=100)
+    product_category: str | None = Field(default=None, max_length=200)
+    project_name: str | None = Field(default=None, max_length=250)
+    project_location: str | None = Field(default=None, max_length=250)
+    project_stage: str | None = Field(default=None, max_length=100)
+    estimated_value: float | None = Field(default=None, ge=0)
+    deadline: str | None = Field(default=None, max_length=100)
+    decision_maker_role: str | None = Field(default=None, max_length=150)
+
+
+class ResearchTask(BaseModel):
+    """One specialist assignment emitted by the supervisor."""
+
+    role: str
+    objective: str
+
+
+class AgentFinding(BaseModel):
+    """Evidence returned by one specialist agent."""
+
+    agent: str
+    summary: str
+    evidence: list[str] = Field(default_factory=list)
+    confidence: float = Field(ge=0.0, le=1.0)
+
+
+class OpportunityDecision(BaseModel):
+    """Auditable qualification result for a project opportunity."""
+
+    score: int = Field(ge=0, le=100)
+    tier: str
+    reasons: list[str] = Field(default_factory=list)
+    missing_information: list[str] = Field(default_factory=list)
+
+
+class SalesBrief(BaseModel):
+    """Actionable handoff produced for the sales owner."""
+
+    executive_summary: str
+    recommended_angle: str
+    discovery_questions: list[str]
+    response_subject: str
+    response_body: str
+    requires_human_approval: bool = True
+
+
+class OpportunityOutcome(BaseModel):
+    """Complete result from the BuildSignal multi-agent workflow."""
+
+    opportunity_id: str
+    request: OpportunityRequest
+    findings: list[AgentFinding]
+    decision: OpportunityDecision
+    brief: SalesBrief
+    routing_status: str
+    agent_trace: list[str]
+    latency_ms: float
+    completed_at: datetime = Field(default_factory=_utcnow)
