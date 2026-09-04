@@ -11,9 +11,11 @@ from __future__ import annotations
 import asyncio
 import contextlib
 from collections.abc import AsyncIterator
+from pathlib import Path
 
 from fastapi import FastAPI, Header, Request, Response
-from fastapi.responses import HTMLResponse, JSONResponse, PlainTextResponse
+from fastapi.responses import FileResponse, HTMLResponse, JSONResponse, PlainTextResponse
+from fastapi.staticfiles import StaticFiles
 from pydantic import ValidationError
 
 from ..agents import build_opportunity_pipeline, build_pipeline
@@ -28,6 +30,8 @@ from .demo_ui import build_demo_html
 from .security import verify_signature
 
 log = get_logger(__name__)
+
+_FRONTEND_DIST = Path(__file__).resolve().parents[3] / "frontend" / "dist"
 
 
 async def _consume(app: FastAPI) -> None:
@@ -73,9 +77,23 @@ def create_app() -> FastAPI:
         lifespan=lifespan,
     )
 
+    assets = _FRONTEND_DIST / "assets"
+    if assets.is_dir():
+        app.mount("/assets", StaticFiles(directory=assets), name="frontend-assets")
+
     @app.get("/", response_class=HTMLResponse)
-    async def demo() -> HTMLResponse:
+    async def demo() -> Response:
+        frontend = _FRONTEND_DIST / "index.html"
+        if frontend.is_file():
+            return FileResponse(frontend)
         return HTMLResponse(build_demo_html())
+
+    @app.get("/favicon.svg", include_in_schema=False)
+    async def favicon() -> Response:
+        icon = _FRONTEND_DIST / "favicon.svg"
+        if icon.is_file():
+            return FileResponse(icon, media_type="image/svg+xml")
+        return Response(status_code=404)
 
     @app.get("/health")
     async def health() -> dict[str, object]:

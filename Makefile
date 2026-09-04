@@ -1,5 +1,5 @@
 .DEFAULT_GOAL := help
-.PHONY: help install demo serve test lint fmt typecheck check train eval docker-up clean
+.PHONY: help install frontend-install frontend-dev frontend-build demo serve test lint fmt typecheck check train eval docker-up clean
 
 help: ## Show this help
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | \
@@ -7,6 +7,15 @@ help: ## Show this help
 
 install: ## Create the venv and install deps (dev + llm extras)
 	uv sync --extra dev --extra llm
+
+frontend-install: ## Install the React + shadcn frontend
+	cd frontend && npm install
+
+frontend-dev: ## Run the Vite frontend at http://127.0.0.1:5173
+	cd frontend && npm run dev
+
+frontend-build: ## Build the frontend for FastAPI to serve
+	cd frontend && npm run build
 
 demo: ## Run sample leads through the pipeline — keyless, no signups
 	uv run buildsignal demo
