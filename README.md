@@ -121,6 +121,3 @@ uv run mypy
 
 The current demo analyzes supplied opportunity evidence; it does not yet crawl bid portals, enrich private company records, or send email. Those are deliberate integration boundaries. A production pilot would connect approved data sources, persist graph state, add tenant-level access controls, and measure rep acceptance and response-time lift.
 
-## Attribution and license
-
-BuildSignal is derived from [OmateLabs/speed-to-lead-agent](https://github.com/OmateLabs/speed-to-lead-agent), whose original commit history is preserved. Both the upstream scaffold and these additions are provided under the [MIT License](LICENSE). Product-specific modifications are maintained by `tb91117`.
