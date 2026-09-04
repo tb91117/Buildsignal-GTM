@@ -3766,7 +3766,7 @@ wheels = [
 ]
 
 [[package]]
-name = "speed-to-lead-agent"
+name = "buildsignal-gtm"
 version = "0.1.0"
 source = { editable = "." }
 dependencies = [

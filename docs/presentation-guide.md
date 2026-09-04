@@ -57,6 +57,6 @@ Keep `DEMO_MODE=true` as the presentation fallback. It exercises the same graph 
 ## Demo recovery
 
 - If the API key or network fails, set `DEMO_MODE=true` and restart.
-- If the browser is unavailable, run `uv run speed-to-lead opportunity-demo`.
+- If the browser is unavailable, run `uv run buildsignal opportunity-demo`.
 - If asked about a surprising score, read the `reasons` array and calculate the points aloud.
 - Never imply the demo has live Monarch data or production integrations.

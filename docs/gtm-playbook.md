@@ -37,7 +37,7 @@ embarrassing.
 ## 4. Attribution is first-class
 
 Every lead keeps its `source` (UTM / referrer). The funnel metrics (`/metrics`) break down volume,
-qualification rate, and speed-to-lead latency **by source**, so you can see which channels send leads
+qualification rate, and response latency **by source**, so you can see which channels send leads
 that actually qualify — not just which send the most. That's the difference between a lead *counter*
 and a growth *system*.
 

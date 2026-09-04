@@ -1,13 +1,13 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: speed-to-lead-agent
+  name: buildsignal
   labels:
-    app.kubernetes.io/name: speed-to-lead-agent
+    app.kubernetes.io/name: buildsignal
 spec:
   type: ClusterIP
   selector:
-    app.kubernetes.io/name: speed-to-lead-agent
+    app.kubernetes.io/name: buildsignal
   ports:
     - port: 80
       targetPort: 8000

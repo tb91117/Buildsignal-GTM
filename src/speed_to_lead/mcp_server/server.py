@@ -1,7 +1,7 @@
 """MCP server exposing lead qualification + drafting as tools.
 
 Lets an MCP client (Claude Desktop, Cursor, …) qualify a lead or draft a reply
-using the exact same services the API and graph use. Run: `speed-to-lead-mcp`.
+using the exact same services the API and graph use. Run: `buildsignal-mcp`.
 """
 
 from __future__ import annotations
@@ -17,7 +17,7 @@ from ..services.draft import get_drafter
 from ..services.enrich import get_enricher
 from ..services.qualify import get_qualifier
 
-mcp = FastMCP("speed-to-lead-agent")
+mcp = FastMCP("buildsignal")
 _enricher = get_enricher()
 _qualifier = get_qualifier()
 

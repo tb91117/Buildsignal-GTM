@@ -1,4 +1,4 @@
-"""Funnel analytics — attribution + speed-to-lead metrics (the GTM lens)."""
+"""Funnel analytics — attribution and response-time metrics (the GTM lens)."""
 
 from .metrics import FunnelMetrics, get_metrics
 
