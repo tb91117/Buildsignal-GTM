@@ -9,10 +9,10 @@ install: ## Create the venv and install deps (dev + llm extras)
 	uv sync --extra dev --extra llm
 
 demo: ## Run sample leads through the pipeline — keyless, no signups
-	uv run speed-to-lead demo
+	uv run buildsignal demo
 
 serve: ## Run the API at http://127.0.0.1:8000
-	uv run speed-to-lead serve
+	uv run buildsignal serve
 
 test: ## Run the test suite
 	uv run pytest -q

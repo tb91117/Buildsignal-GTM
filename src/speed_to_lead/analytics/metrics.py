@@ -1,7 +1,7 @@
 """In-memory funnel metrics with source attribution.
 
 The point isn't a fancy TSDB — it's to show the tool *thinks in funnels*:
-speed-to-lead latency (the metric that drives conversion), qualification mix,
+response latency (the metric that drives conversion), qualification mix,
 and where leads come from. Exposes a JSON snapshot and Prometheus text.
 """
 

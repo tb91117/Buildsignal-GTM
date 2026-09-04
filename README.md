@@ -2,7 +2,7 @@
 
 BuildSignal turns scattered building-material inquiries into evidence-backed sales opportunities. A LangGraph supervisor dispatches three specialist agents in parallel, an evidence critic checks completeness, deterministic qualification makes the score auditable, and a strategist prepares the sales handoff. No external action happens without human approval.
 
-This is a presentation-ready vertical extension of Omate Labs' MIT-licensed `speed-to-lead-agent` scaffold.
+This is a presentation-ready vertical extension of an MIT-licensed Omate Labs scaffold.
 
 ## Why it matters
 
@@ -41,12 +41,12 @@ The LLM performs synthesis and writing. Qualification remains deterministic, so 
 Requires Python 3.12 and [uv](https://docs.astral.sh/uv/).
 
 ```bash
-git clone https://github.com/tb91117/GTM-agent.git
-cd GTM-agent
+git clone https://github.com/tb91117/Buildsignal-GTM.git
+cd Buildsignal-GTM
 uv sync --extra dev --extra openai --python 3.12
 copy .env.example .env
-uv run speed-to-lead opportunity-demo
-uv run speed-to-lead serve
+uv run buildsignal opportunity-demo
+uv run buildsignal serve
 ```
 
 Open <http://127.0.0.1:8000> for the visual demo or <http://127.0.0.1:8000/docs> for the API explorer.
@@ -120,4 +120,8 @@ uv run mypy
 ## Honest scope
 
 The current demo analyzes supplied opportunity evidence; it does not yet crawl bid portals, enrich private company records, or send email. Those are deliberate integration boundaries. A production pilot would connect approved data sources, persist graph state, add tenant-level access controls, and measure rep acceptance and response-time lift.
+
+## Attribution and license
+
+BuildSignal is derived from an Omate Labs MIT-licensed scaffold whose original commit history is preserved. Both the upstream scaffold and these additions are provided under the [MIT License](LICENSE). Product-specific modifications are maintained by `tb91117`.
 

@@ -1,20 +1,20 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ include "speed-to-lead.name" . }}
+  name: {{ include "buildsignal.name" . }}
   labels:
-    {{- include "speed-to-lead.labels" . | nindent 4 }}
+    {{- include "buildsignal.labels" . | nindent 4 }}
 spec:
   {{- if not .Values.autoscaling.enabled }}
   replicas: {{ .Values.replicaCount }}
   {{- end }}
   selector:
     matchLabels:
-      {{- include "speed-to-lead.selectorLabels" . | nindent 6 }}
+      {{- include "buildsignal.selectorLabels" . | nindent 6 }}
   template:
     metadata:
       labels:
-        {{- include "speed-to-lead.selectorLabels" . | nindent 8 }}
+        {{- include "buildsignal.selectorLabels" . | nindent 8 }}
     spec:
       securityContext:
         runAsNonRoot: true

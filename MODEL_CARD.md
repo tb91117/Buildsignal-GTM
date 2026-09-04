@@ -1,7 +1,7 @@
 # Model Card — Lead Intent Classifier (LoRA)
 
 A small text classifier that labels an inbound-lead message with its **buyer intent**, used by
-`speed-to-lead-agent` to qualify leads. Built to demonstrate production-minded fine-tuning: replace a
+BuildSignal GTM uses it to qualify leads. It demonstrates production-minded fine-tuning: replace a
 per-lead LLM call with a model that runs locally in milliseconds for ~$0.
 
 ## Model details

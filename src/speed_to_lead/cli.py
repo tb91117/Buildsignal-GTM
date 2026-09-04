@@ -1,4 +1,4 @@
-"""Command-line entry point: `speed-to-lead {demo,opportunity-demo,serve}`."""
+"""Command-line entry point: `buildsignal {demo,opportunity-demo,serve}`."""
 
 from __future__ import annotations
 
@@ -25,7 +25,7 @@ async def _run_demo(path: Path) -> None:
     metrics = get_metrics()
 
     leads = [InboundLead.model_validate(row) for row in json.loads(path.read_text())]
-    print(f"\n  speed-to-lead-agent · demo mode={settings.demo_mode} · {len(leads)} leads\n")
+    print(f"\n  BuildSignal GTM · demo mode={settings.demo_mode} · {len(leads)} leads\n")
     print(f"  {'TIER':<6}{'SCORE':<7}{'INTENT':<18}{'LATENCY':<9}{'EMAIL'}")
     print("  " + "─" * 70)
     for inbound in leads:
@@ -62,7 +62,7 @@ async def _run_opportunity_demo(path: Path) -> None:
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser(prog="speed-to-lead")
+    parser = argparse.ArgumentParser(prog="buildsignal")
     sub = parser.add_subparsers(dest="cmd", required=True)
     demo = sub.add_parser("demo", help="run sample leads through the pipeline (keyless)")
     demo.add_argument("--file", type=Path, default=_SAMPLE)

@@ -1,5 +1,5 @@
 [project]
-name = "speed-to-lead-agent"
+name = "buildsignal-gtm"
 version = "0.1.0"
 description = "Multi-agent opportunity intelligence for building-material revenue teams, built with LangGraph and FastAPI."
 readme = "README.md"
@@ -46,11 +46,11 @@ dev = [
 ]
 
 [project.urls]
-Repository = "https://github.com/tb91117/GTM-agent"
+Repository = "https://github.com/tb91117/Buildsignal-GTM"
 
 [project.scripts]
-speed-to-lead = "speed_to_lead.cli:main"
-speed-to-lead-mcp = "speed_to_lead.mcp_server.server:main"
+buildsignal = "speed_to_lead.cli:main"
+buildsignal-mcp = "speed_to_lead.mcp_server.server:main"
 
 [build-system]
 requires = ["hatchling"]

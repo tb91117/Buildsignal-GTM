@@ -1,10 +1,10 @@
 {
   "title": "Speed-to-Lead — Funnel & Speed",
-  "uid": "speed-to-lead",
+  "uid": "buildsignal",
   "schemaVersion": 39,
   "version": 1,
   "refresh": "30s",
-  "tags": ["speed-to-lead", "gtm"],
+  "tags": ["buildsignal", "gtm"],
   "panels": [
     {
       "id": 1,

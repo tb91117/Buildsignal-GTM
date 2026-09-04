@@ -1,6 +1,6 @@
 # Contributing
 
-Thanks for your interest in improving **speed-to-lead-agent**.
+Thanks for your interest in improving **BuildSignal GTM**.
 
 ## Setup
 

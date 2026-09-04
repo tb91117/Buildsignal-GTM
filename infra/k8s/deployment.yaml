@@ -2,24 +2,24 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: speed-to-lead-agent
+  name: buildsignal
   labels:
-    app.kubernetes.io/name: speed-to-lead-agent
+    app.kubernetes.io/name: buildsignal
 spec:
   replicas: 2
   selector:
     matchLabels:
-      app.kubernetes.io/name: speed-to-lead-agent
+      app.kubernetes.io/name: buildsignal
   template:
     metadata:
       labels:
-        app.kubernetes.io/name: speed-to-lead-agent
+        app.kubernetes.io/name: buildsignal
     spec:
       securityContext:
         runAsNonRoot: true
       containers:
         - name: api
-          image: ghcr.io/omatelabs/speed-to-lead-agent:0.1.0
+          image: ghcr.io/tb91117/buildsignal-gtm:0.2.0
           ports:
             - containerPort: 8000
           env:
@@ -30,7 +30,7 @@ spec:
           # Bring-your-own-key: uncomment to load secrets (kubectl create secret ...)
           # envFrom:
           #   - secretRef:
-          #       name: speed-to-lead-secrets
+          #       name: buildsignal-secrets
           livenessProbe:
             httpGet:
               path: /health

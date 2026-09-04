@@ -1,4 +1,4 @@
-"""speed-to-lead-agent — qualify and respond to inbound leads in seconds.
+"""BuildSignal GTM — qualify building-material opportunities with specialist agents.
 
 A multi-agent (LangGraph) pipeline that takes a raw inbound lead, qualifies it
 with a fine-tuned intent classifier, researches it, drafts a personalized reply,

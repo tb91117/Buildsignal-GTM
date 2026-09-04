@@ -1,9 +1,22 @@
 """API surface: health, sync run, webhook signature, metrics."""
 
+from collections.abc import Iterator
+
+import pytest
 from fastapi.testclient import TestClient
 
 from speed_to_lead.api import app
 from speed_to_lead.api.security import sign
+from speed_to_lead.config import get_settings
+
+
+@pytest.fixture(autouse=True)
+def _force_demo_mode(monkeypatch: pytest.MonkeyPatch) -> Iterator[None]:
+    """Never let a developer's local `.env` turn unit tests into paid API calls."""
+    monkeypatch.setenv("DEMO_MODE", "true")
+    get_settings.cache_clear()
+    yield
+    get_settings.cache_clear()
 
 
 def test_health() -> None:
