@@ -63,20 +63,20 @@ class FunnelMetrics:
         """Minimal Prometheus exposition — scrapeable by the Grafana stack."""
         s = self.snapshot()
         lines = [
-            "# HELP stl_leads_total Leads processed.",
-            "# TYPE stl_leads_total counter",
-            f"stl_leads_total {s['leads_total']}",
-            "# HELP stl_qualification_rate Share of leads qualified (hot+warm).",
-            "# TYPE stl_qualification_rate gauge",
-            f"stl_qualification_rate {s['qualification_rate']}",
-            "# HELP stl_response_ms Speed-to-lead latency.",
-            "# TYPE stl_response_ms summary",
-            f'stl_response_ms{{quantile="0.5"}} {s["response_ms_p50"]}',
-            f'stl_response_ms{{quantile="0.95"}} {s["response_ms_p95"]}',
+            "# HELP buildsignal_leads_total Leads processed.",
+            "# TYPE buildsignal_leads_total counter",
+            f"buildsignal_leads_total {s['leads_total']}",
+            "# HELP buildsignal_qualification_rate Share of qualified leads.",
+            "# TYPE buildsignal_qualification_rate gauge",
+            f"buildsignal_qualification_rate {s['qualification_rate']}",
+            "# HELP buildsignal_response_ms Response latency.",
+            "# TYPE buildsignal_response_ms summary",
+            f'buildsignal_response_ms{{quantile="0.5"}} {s["response_ms_p50"]}',
+            f'buildsignal_response_ms{{quantile="0.95"}} {s["response_ms_p95"]}',
         ]
         by_tier = cast("dict[str, int]", s["by_tier"])
         for tier, n in by_tier.items():
-            lines.append(f'stl_leads_by_tier{{tier="{tier}"}} {n}')
+            lines.append(f'buildsignal_leads_by_tier{{tier="{tier}"}} {n}')
         return "\n".join(lines) + "\n"
 
 
