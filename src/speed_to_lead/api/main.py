@@ -13,17 +13,18 @@ import contextlib
 from collections.abc import AsyncIterator
 
 from fastapi import FastAPI, Header, Request, Response
-from fastapi.responses import JSONResponse, PlainTextResponse
+from fastapi.responses import HTMLResponse, JSONResponse, PlainTextResponse
 from pydantic import ValidationError
 
-from ..agents import build_pipeline
+from ..agents import build_opportunity_pipeline, build_pipeline
 from ..analytics import get_metrics
 from ..config import get_settings
 from ..logging import configure_logging, get_logger
-from ..models import InboundLead, LeadOutcome
+from ..models import InboundLead, LeadOutcome, OpportunityOutcome, OpportunityRequest
 from ..normalize import normalize_lead
 from ..observability import setup_tracing
 from ..worker import InMemoryQueue
+from .demo_ui import build_demo_html
 from .security import verify_signature
 
 log = get_logger(__name__)
@@ -52,6 +53,7 @@ async def lifespan(app: FastAPI) -> AsyncIterator[None]:
     setup_tracing(settings)  # Langfuse LLM tracing if keys are set (else no-op)
     app.state.settings = settings
     app.state.pipeline = build_pipeline(settings)
+    app.state.opportunity_pipeline = build_opportunity_pipeline(settings)
     app.state.queue = InMemoryQueue()  # per-app, bound to this event loop
     app.state.worker = asyncio.create_task(_consume(app))
     log.info("startup", demo_mode=settings.demo_mode, llm_enabled=settings.llm_enabled)
@@ -65,11 +67,15 @@ async def lifespan(app: FastAPI) -> AsyncIterator[None]:
 
 def create_app() -> FastAPI:
     app = FastAPI(
-        title="speed-to-lead-agent",
-        version="0.1.0",
-        summary="Qualify and respond to inbound leads in seconds.",
+        title="BuildSignal GTM",
+        version="0.2.0",
+        summary="Multi-agent opportunity intelligence for building-material revenue teams.",
         lifespan=lifespan,
     )
+
+    @app.get("/", response_class=HTMLResponse)
+    async def demo() -> HTMLResponse:
+        return HTMLResponse(build_demo_html())
 
     @app.get("/health")
     async def health() -> dict[str, object]:
@@ -98,6 +104,12 @@ def create_app() -> FastAPI:
         lead = normalize_lead(inbound)
         outcome: LeadOutcome = await app.state.pipeline.run(lead)
         get_metrics().record(outcome)
+        return outcome
+
+    @app.post("/opportunities/sync")
+    async def analyze_opportunity(request: OpportunityRequest) -> OpportunityOutcome:
+        """Run the BuildSignal specialist-agent graph and return an auditable sales brief."""
+        outcome: OpportunityOutcome = await app.state.opportunity_pipeline.run(request)
         return outcome
 
     @app.get("/metrics")
