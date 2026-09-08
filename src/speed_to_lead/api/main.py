@@ -14,6 +14,7 @@ from collections.abc import AsyncIterator
 from pathlib import Path
 
 from fastapi import FastAPI, Header, Request, Response
+from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse, HTMLResponse, JSONResponse, PlainTextResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import ValidationError
@@ -76,6 +77,15 @@ def create_app() -> FastAPI:
         summary="Multi-agent opportunity intelligence for building-material revenue teams.",
         lifespan=lifespan,
     )
+
+    origins = get_settings().cors_allow_origin_list
+    if origins:
+        app.add_middleware(
+            CORSMiddleware,
+            allow_origins=origins,
+            allow_methods=["GET", "POST"],
+            allow_headers=["content-type"],
+        )
 
     assets = _FRONTEND_DIST / "assets"
     if assets.is_dir():

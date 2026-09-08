@@ -38,6 +38,7 @@ import { Progress } from "@/components/ui/progress"
 import { Separator } from "@/components/ui/separator"
 import { Skeleton } from "@/components/ui/skeleton"
 import { Textarea } from "@/components/ui/textarea"
+import { apiUrl } from "@/lib/api"
 import { cn } from "@/lib/utils"
 import type { HealthStatus, OpportunityForm, OpportunityOutcome } from "@/types"
 
@@ -413,7 +414,7 @@ function App() {
 
   useEffect(() => {
     let active = true
-    fetch("/health")
+    fetch(apiUrl("/health"))
       .then((response) => response.json() as Promise<HealthStatus>)
       .then((status) => active && setHealth(status))
       .catch(() => active && setHealth(null))
@@ -446,7 +447,7 @@ function App() {
     }
 
     try {
-      const response = await fetch("/opportunities/sync", {
+      const response = await fetch(apiUrl("/opportunities/sync"), {
         method: "POST",
         headers: { "content-type": "application/json" },
         body: JSON.stringify(payload),

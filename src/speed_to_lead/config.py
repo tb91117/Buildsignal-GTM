@@ -29,6 +29,10 @@ class Settings(BaseSettings):
     log_level: str = "INFO"
     environment: str = "local"
 
+    # CORS — comma-separated origins allowed to call the API (e.g. the
+    # deployed Vercel frontend). Same-origin deployments don't need this.
+    cors_allow_origins: str = "http://localhost:5173"
+
     # LLM (draft step)
     llm_provider: LlmProvider = "gemini"
     llm_model: str = "gemini/gemini-1.5-flash"
@@ -67,6 +71,10 @@ class Settings(BaseSettings):
 
     # Routing
     auto_send_min_confidence: float = Field(default=0.75, ge=0.0, le=1.0)
+
+    @property
+    def cors_allow_origin_list(self) -> list[str]:
+        return [origin.strip() for origin in self.cors_allow_origins.split(",") if origin.strip()]
 
     @property
     def llm_enabled(self) -> bool:
