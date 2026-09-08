@@ -1,0 +1,15 @@
+services:
+  - type: web
+    name: buildsignal-gtm-api
+    runtime: docker
+    dockerfilePath: ./Dockerfile
+    plan: free
+    envVars:
+      - key: DEMO_MODE
+        value: "true"
+      - key: ENVIRONMENT
+        value: "production"
+      - key: LOG_LEVEL
+        value: "INFO"
+      - key: CORS_ALLOW_ORIGINS
+        value: "http://localhost:5173"

@@ -13,7 +13,7 @@ WORKDIR /app
 # Install deps first (cached layer), then the app
 COPY pyproject.toml README.md ./
 COPY src ./src
-RUN uv sync --no-dev --extra llm --extra infra
+RUN uv sync --no-dev --extra llm --extra openai
 
 COPY data ./data
 
@@ -22,4 +22,4 @@ EXPOSE 8000
 RUN useradd -m appuser && chown -R appuser /app
 USER appuser
 
-CMD ["uv", "run", "uvicorn", "speed_to_lead.api.main:app", "--host", "0.0.0.0", "--port", "8000"]
+CMD ["sh", "-c", "uv run uvicorn speed_to_lead.api.main:app --host 0.0.0.0 --port ${PORT:-8000}"]
